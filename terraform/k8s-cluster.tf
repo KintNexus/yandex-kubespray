@@ -1,17 +1,17 @@
 # Variables
 
 variable "yc_token" {
-  type = string
+  type        = string
   description = "Yandex Cloud API key"
 }
 
 variable "yc_cloud_id" {
-  type = string
+  type        = string
   description = "Yandex Cloud id"
 }
 
 variable "yc_folder_id" {
-  type = string
+  type        = string
   description = "Yandex Cloud folder id"
 }
 
@@ -76,7 +76,7 @@ resource "yandex_iam_service_account" "admin" {
 
 resource "yandex_resourcemanager_folder_iam_binding" "editor" {
   folder_id = var.yc_folder_id
-  role = "editor"
+  role      = "editor"
   members = [
     "serviceAccount:${yandex_iam_service_account.admin.id}",
   ]
@@ -105,7 +105,7 @@ resource "yandex_compute_instance_group" "k8s-masters" {
     yandex_vpc_subnet.k8s-subnet-2,
     yandex_vpc_subnet.k8s-subnet-3,
   ]
-  
+
   # Шаблон экземпляра, к которому принадлежит группа экземпляров.
   instance_template {
 
@@ -114,8 +114,8 @@ resource "yandex_compute_instance_group" "k8s-masters" {
 
     # Ресурсы, которые будут выделены для создания виртуальных машин в Instance Groups
     resources {
-      cores  = 2
-      memory = 2
+      cores         = 2
+      memory        = 2
       core_fraction = 20 # Базовый уровень производительности vCPU. https://cloud.yandex.ru/docs/compute/concepts/performance-levels
     }
 
@@ -188,8 +188,8 @@ resource "yandex_compute_instance_group" "k8s-workers" {
     name = "worker-{instance.index}"
 
     resources {
-      cores  = 2
-      memory = 2
+      cores         = 2
+      memory        = 2
       core_fraction = 20
     }
 
@@ -265,8 +265,8 @@ resource "yandex_compute_instance_group" "k8s-ingresses" {
     name = "ingress-{instance.index}"
 
     resources {
-      cores  = 2
-      memory = 2
+      cores         = 2
+      memory        = 2
       core_fraction = 20
     }
 
@@ -349,11 +349,11 @@ resource "yandex_lb_network_load_balancer" "k8s-load-balancer" {
 
 # Backet for storing cluster backups
 
-resource "yandex_storage_bucket" "backup-backet-apatsev" {
-  bucket = "backup-backet-apatsev"
+resource "yandex_storage_bucket" "back-backet-kintnexus" {
+  bucket        = "back-backet-kintnexus"
   force_destroy = true
-  access_key = yandex_iam_service_account_static_access_key.static-access-key.access_key
-  secret_key = yandex_iam_service_account_static_access_key.static-access-key.secret_key
+  access_key    = yandex_iam_service_account_static_access_key.static-access-key.access_key
+  secret_key    = yandex_iam_service_account_static_access_key.static-access-key.secret_key
   depends_on = [
     yandex_iam_service_account_static_access_key.static-access-key
   ]
@@ -363,46 +363,46 @@ resource "yandex_storage_bucket" "backup-backet-apatsev" {
 
 output "instance_group_masters_public_ips" {
   description = "Public IP addresses for master-nodes"
-  value = yandex_compute_instance_group.k8s-masters.instances.*.network_interface.0.nat_ip_address
+  value       = yandex_compute_instance_group.k8s-masters.instances.*.network_interface.0.nat_ip_address
 }
 
 output "instance_group_masters_private_ips" {
   description = "Private IP addresses for master-nodes"
-  value = yandex_compute_instance_group.k8s-masters.instances.*.network_interface.0.ip_address
+  value       = yandex_compute_instance_group.k8s-masters.instances.*.network_interface.0.ip_address
 }
 
 output "instance_group_workers_public_ips" {
   description = "Public IP addresses for worder-nodes"
-  value = yandex_compute_instance_group.k8s-workers.instances.*.network_interface.0.nat_ip_address
+  value       = yandex_compute_instance_group.k8s-workers.instances.*.network_interface.0.nat_ip_address
 }
 
 output "instance_group_workers_private_ips" {
   description = "Private IP addresses for worker-nodes"
-  value = yandex_compute_instance_group.k8s-workers.instances.*.network_interface.0.ip_address
+  value       = yandex_compute_instance_group.k8s-workers.instances.*.network_interface.0.ip_address
 }
 
 output "instance_group_ingresses_public_ips" {
   description = "Public IP addresses for ingress-nodes"
-  value = yandex_compute_instance_group.k8s-ingresses.instances.*.network_interface.0.nat_ip_address
+  value       = yandex_compute_instance_group.k8s-ingresses.instances.*.network_interface.0.nat_ip_address
 }
 
 output "instance_group_ingresses_private_ips" {
   description = "Private IP addresses for ingress-nodes"
-  value = yandex_compute_instance_group.k8s-ingresses.instances.*.network_interface.0.ip_address
+  value       = yandex_compute_instance_group.k8s-ingresses.instances.*.network_interface.0.ip_address
 }
 
 output "load_balancer_public_ip" {
   description = "Public IP address of load balancer"
-  value = yandex_lb_network_load_balancer.k8s-load-balancer.listener.*.external_address_spec[0].*.address
+  value       = yandex_lb_network_load_balancer.k8s-load-balancer.listener.*.external_address_spec[0].*.address
 }
 
 output "static-key-access-key" {
   description = "Access key for admin user"
-  value = yandex_iam_service_account_static_access_key.static-access-key.access_key
+  value       = yandex_iam_service_account_static_access_key.static-access-key.access_key
 }
 
 output "static-key-secret-key" {
   description = "Secret key for admin user"
-  value = yandex_iam_service_account_static_access_key.static-access-key.secret_key
-  sensitive = true
+  value       = yandex_iam_service_account_static_access_key.static-access-key.secret_key
+  sensitive   = true
 }
