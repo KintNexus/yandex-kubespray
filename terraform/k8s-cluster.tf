@@ -111,12 +111,14 @@ resource "yandex_compute_instance_group" "k8s-masters" {
 
     # Имя виртуальных машин, создаваемых Instance Groups
     name = "master-{instance.index}"
+    # Тип процессора Intel Ice Lake
+    platform_id = "standard-v3"
 
     # Ресурсы, которые будут выделены для создания виртуальных машин в Instance Groups
     resources {
       cores         = 2
       memory        = 2
-      core_fraction = 20 # Базовый уровень производительности vCPU. https://cloud.yandex.ru/docs/compute/concepts/performance-levels
+      core_fraction = 50 # Базовый уровень производительности vCPU. https://cloud.yandex.ru/docs/compute/concepts/performance-levels
     }
 
     # Загрузочный диск в виртуальных машинах в Instance Groups
@@ -185,12 +187,13 @@ resource "yandex_compute_instance_group" "k8s-workers" {
 
   instance_template {
 
-    name = "worker-{instance.index}"
+    name        = "worker-{instance.index}"
+    platform_id = "standard-v3"
 
     resources {
       cores         = 2
       memory        = 2
-      core_fraction = 20
+      core_fraction = 50
     }
 
     boot_disk {
@@ -262,12 +265,13 @@ resource "yandex_compute_instance_group" "k8s-ingresses" {
 
   instance_template {
 
-    name = "ingress-{instance.index}"
+    name        = "ingress-{instance.index}"
+    platform_id = "standard-v3"
 
     resources {
       cores         = 2
       memory        = 2
-      core_fraction = 20
+      core_fraction = 50
     }
 
     boot_disk {
